@@ -55,7 +55,7 @@
 
             <!-- Inicio xd -->
             <div class="form sign-up">
-                <form class="Form" action="/login" method="POST">
+                <form class="Form1" action="/login" method="POST">
                     @csrf
                     
                     <h2>Inicia Sesion</h2>

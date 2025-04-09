@@ -7,7 +7,7 @@ use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\RegisterController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('/home.index');
 });
 
 Route::get('/register', [RegisterController::class, 'show']);
