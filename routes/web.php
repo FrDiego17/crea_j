@@ -18,3 +18,19 @@ Route::post('/login', [LoginController::class, 'login']);
 
 Route::get('/home', [HomeController::class, 'index']);
 Route::get('/logout', [LogoutController::class, 'logout']);
+
+Route::get('/admin', function () {
+    return view('admin-index');
+});
+
+Route::get('/admin-usuarios', function () {
+    return view('admin-usuarios');
+});
+
+Route::get('/admin-rutas', function () {
+    return view('admin-rutas');
+});
+
+Route::get('/admin-conductores', function () {
+    return view('admin-conductores');
+});
