@@ -1,26 +1,24 @@
-@if(isset($errors) && count($errors) > 0 )
-    <div class="alert alert-danger">
-        <ul class="list-unstyled mb-0"> 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: '¡Éxito!',
+            text: '{{ session('success') }}',
+        });
+    @endif
+
+    @if($errors->any())
+        let errorMessages = `
             @foreach($errors->all() as $error)
                 <li>{{ $error }}</li>
             @endforeach
-        </ul>
-    </div>
-@endif
-
-@if (Session::get('success', false))
-    <?php $data = Session::get('success')?>
-    @if (is_array($data))
-        @foreach($data as $message)
-            <div class="alert alert-success">
-                <i class="fa fa-check"></i>
-                {{ $message }}
-            </div>
-        @endforeach
-    @else
-        <div class="alert alert-success">
-            <i class="fa fa-check"></i>
-            {{ $data }}
-        </div>
+        `;
+        Swal.fire({
+            icon: 'error',
+            title: 'Error de validación',
+            html: `<ul style="text-align: left;">${errorMessages}</ul>`
+        });
     @endif
-@endif 
+</script>
