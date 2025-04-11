@@ -38,13 +38,13 @@
 
             <div class="img">
                 <div class="img__text m--up">
-                    <h2>HOLA</h2>
-                    <p>Ya tienes una cuenta?</p>
+                    <h2 class="Text">HOLA</h2>
+                    <p class="Text">Ya tienes una cuenta?</p>
                 </div>
 
                 <div class="img__text m--in">
-                    <h2>HOLA</h2>
-                    <p>No tienes una cuenta?</p>
+                    <h2 class="Text">HOLA</h2>
+                    <p class="Text">No tienes una cuenta?</p>
                 </div>
 
                 <div class="img__btn">

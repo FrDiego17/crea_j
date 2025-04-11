@@ -12,7 +12,7 @@
     @if($errors->any())
         let errorMessages = `
             @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
+                <li class="mensaje" >{{ $error }}</li>
             @endforeach
         `;
         Swal.fire({

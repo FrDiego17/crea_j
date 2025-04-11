@@ -1,3 +1,4 @@
+
 *, *:before, *:after {
     box-sizing: border-box;
     margin: 0;
@@ -9,6 +10,14 @@ body {
     background: #ededed;
     height: 100vh;
     overflow: hidden;
+}
+
+.mensaje{
+    margin-left: 75px;
+}
+
+.Text{
+    font-family: 'Mi fuente';
 }
   
 input, button {
@@ -132,6 +141,7 @@ button {
     text-align: center;
     color: #fff;
     transition: transform 1.2s ease-in-out;
+    
 }
   
 .img__text h2 {
