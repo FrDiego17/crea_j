@@ -14,6 +14,12 @@
         @yield('content')
     </main>
 </body>
+<style>
+    .container-fluid{
+        margin-left: 250px; /* igual al ancho del sidebar */
+        padding: 20px;
+        width: calc(100% - 250px);
+        box-sizing: border-box;
+    }
+</style>
 </html>
-
-<!-- @include('layouts.partials.navbar')-->

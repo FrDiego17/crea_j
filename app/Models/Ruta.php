@@ -5,22 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class User
+ * Class Ruta
  *
  * @property $id
- * @property $name
- * @property $email
- * @property $username
- * @property $email_verified_at
- * @property $password
- * @property $remember_token
+ * @property $origen
  * @property $created_at
  * @property $updated_at
  *
+ * @property Conductore[] $conductores
  * @package App
  * @mixin \Illuminate\Database\Eloquent\Builder
  */
-class User extends Model
+class Ruta extends Model
 {
     
     protected $perPage = 20;
@@ -30,7 +26,15 @@ class User extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['name', 'email', 'username'];
+    protected $fillable = ['origen'];
 
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function conductores()
+    {
+        return $this->hasMany(Conductore::class, 'rutas_id');
+    }
+    
 }

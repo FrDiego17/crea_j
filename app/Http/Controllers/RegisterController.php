@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
+
     public function show(){
         if(Auth::check()){
             return redirect('/home');
@@ -38,4 +39,69 @@ class RegisterController extends Controller
 
         return redirect('/login')->with('success', "Cuenta registrada exitosamente.");
     }
+
+    /*public function index(Request $request): View
+    {
+        $usuarios = User::paginate();
+
+        return view('usuario.index', compact('user'))
+            ->with('i' ($request->input('page', 1) - 1) * $usuarios->perPage());
+    }
+
+    public function create(): View
+    {
+        $usuarios = new User();
+        return view('usuario.create', compact('user'));
+    }
+
+    public function store(UsuarioRequest $request): RedirectResponse
+    {
+        $data = $request->validated();
+        $data['password'] = Hash::make($data['password']);
+
+        User::create($data);
+
+        return Redirect::route('usuarios.index')
+            ->with('success', 'Usuario creado correctamente.');
+    }
+
+    public function showA($id): View
+    {
+        $usuarios = User::findOrFail($id);
+
+        return view('usuarios.show', compact('user'));
+    }
+
+    public function edit($id): View 
+    {
+        $usuarios = User::findOrdail($id);
+
+        return view('usuarios.edit', compact('user'));
+    }
+
+    public function update(UsuarioRequest $request, User $usuarios): RedirectResponse
+    {
+        $data = $request->validated();
+
+        // Solo actualizar la contraseña si se proporcionó
+        if (!empty($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']);
+        }
+
+        $usuario->update($data);
+
+        return Redirect::route('usuarios.index')
+            ->with('success', 'Usuario actualizado correctamente.');
+    }
+
+    
+    public function destroy($id): RedirectResponse
+    {
+        User::findOrFail($id)->delete();
+
+        return Redirect::route('usuarios.index')
+            ->with('success', 'Usuario eliminado correctamente.');
+    }*/
 }

@@ -5,6 +5,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\RutaController;
+use App\Http\Controllers\ConductoreController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return view('/home.index');
@@ -19,18 +22,13 @@ Route::post('/login', [LoginController::class, 'login']);
 Route::get('/home', [HomeController::class, 'index']);
 Route::get('/logout', [LogoutController::class, 'logout']);
 
+Route::resource('conductores', ConductoreController::class);
+
+
+Route::resource('rutas', RutaController::class );
+
+Route::resource('users', UserController::class);
+
 Route::get('/admin', function () {
     return view('admin-index');
-});
-
-Route::get('/admin-usuarios', function () {
-    return view('admin-usuarios');
-});
-
-Route::get('/admin-rutas', function () {
-    return view('admin-rutas');
-});
-
-Route::get('/admin-conductores', function () {
-    return view('admin-conductores');
 });

@@ -31,7 +31,7 @@
       <h1 class="my-4">Welcome!</h1>
       <div class="row row-cols-2 g-4">
 
-        <a href="/admin-rutas">
+        <a href="{{route('rutas.index')}}">
           <div class="col">
             <div class="card shadow-sm animate-card">
                 <div class="card-body">
@@ -42,7 +42,7 @@
           </div>
         </a>
 
-        <a href="/admin-conductores">
+        <a href="/conductores">
           <div class="col">
             <div class="card shadow-sm animate-card">
                 <div class="card-body">
@@ -53,7 +53,7 @@
           </div>
         </a>
 
-        <a href="/admin-usuarios">
+        <a href="{{route('users.index')}}">
           <div class="col">
             <div class="card shadow-sm animate-card">
                 <div class="card-body">
