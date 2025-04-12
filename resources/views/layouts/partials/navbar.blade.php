@@ -1,36 +1,35 @@
 @auth
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
-            <a class="nav-link" href="#">Bienvenido {{auth()->user()->name ?? auth()->user()->username}}</a>
-            <a class="nav-link" href="/logout">Logout</a>
-            <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+    <header>
+        <nav>
+            <div class="logo">U-Go!</div>
+            <ul class="menu">
+                <li><a href="/home">Inicio</a></li>
+                <li><a href="/horario">Horarios</a></li>
+                <li><a href="#contacto">Contáctanos</a></li>
+                <li><a href="#">Bienvenido {{auth()->user()->username}} </a></li>
+                <li><a href="/logout">Cerrar Session</a></li>
+            </ul>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
             </div>
-        </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 @endauth
 
 @guest
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-        <a class="navbar-brand" href="#">Navbar</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
-            <a class="nav-link" href="#">Features</a>
-            <a class="nav-link disabled" aria-disabled="true">Disabled</a>
+    <header>
+        <nav>
+            <div class="logo">U-Go!</div>
+            <ul class="menu">
+                <li><a href="/home">Inicio</a></li>
+                <li><a href="/login">Inicio de sesión</a></li>
+                <li><a href="/register">Registrarse</a></li>
+                <li><a href="/horario">Horarios</a></li>
+                <li><a href="#contacto">Contáctanos</a></li>
+            </ul>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
             </div>
-        </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 @endguest

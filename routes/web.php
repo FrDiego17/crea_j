@@ -7,7 +7,7 @@ use App\Http\Controllers\LogoutController;
 use App\Http\Controllers\RegisterController;
 
 Route::get('/', function () {
-    return view('/home.index');
+    return view('home.index');
 });
 
 Route::get('/register', [RegisterController::class, 'show']);
@@ -34,3 +34,13 @@ Route::get('/admin-rutas', function () {
 Route::get('/admin-conductores', function () {
     return view('admin-conductores');
 });
+
+Route::get('/horario', [HomeController::class, 'horario']);
+
+Route::get('/apopa', [HomeController::class, 'apopa']);
+Route::get('/cojute', [HomeController::class, 'cojute']);
+Route::get('/ilobasco', [HomeController::class, 'ilobasco']);
+Route::get('/lucia', [HomeController::class, 'lucia']);
+Route::get('/quezalte', [HomeController::class, 'quezalte']);
+Route::get('/sanmartin', [HomeController::class, 'sanmartin']);
+
