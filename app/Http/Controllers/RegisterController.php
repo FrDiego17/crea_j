@@ -25,7 +25,7 @@ class RegisterController extends Controller
         ], [
             'username.unique' => 'Este nombre de usuario ya está en uso.',
             'email.unique' => 'Este correo electrónico ya está registrado.',
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
+            'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
             'password.confirmed' => 'La confirmación de la contraseña no coincide.',
             
         ]);

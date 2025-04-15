@@ -20,12 +20,12 @@
                 </label>
 
                 <label>
-                    <span>Password</span>
+                    <span>Contraseña</span>
                     <input name="password" type="password" />
                 </label>
 
                 <label>
-                    <span>Password</span>
+                    <span>Confirmar Contraseña</span>
                     <input name="password_confirmation" type="password" />
                 </label>
 
