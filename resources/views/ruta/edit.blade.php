@@ -1,5 +1,5 @@
 @extends('layouts.admin_aside')
-@extends('layouts.app-master')
+@extends('layouts.app-masterAdmin')
 
 @section('template_title')
     {{ __('Update') }} Ruta
