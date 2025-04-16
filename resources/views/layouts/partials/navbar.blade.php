@@ -24,7 +24,6 @@
                 <li><a href="/home">Inicio</a></li>
                 <li><a href="/login">Inicio de sesión</a></li>
                 <li><a href="/register">Registrarse</a></li>
-                <li><a href="/horario">Horarios</a></li>
                 <li><a href="#contacto">Contáctanos</a></li>
             </ul>
             <div class="menu-toggle">
