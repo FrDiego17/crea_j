@@ -7,6 +7,7 @@ use App\Http\Requests\RegisterRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
 {
@@ -28,15 +29,17 @@ class RegisterController extends Controller
             'email.unique' => 'Este correo electrónico ya está registrado.',
             'password.min' => 'La contraseña debe tener al menos 6 caracteres.',
             'password.confirmed' => 'La confirmación de la contraseña no coincide.',
-            
         ]);
-
+    
         if ($validator->fails()) {
             return redirect('/register')->withErrors($validator)->withInput();
         }
-
-        $user = User::create($validator->validated());
-
+    
+        $data = $validator->validated();
+        $data['password'] = Hash::make($data['password']);
+    
+        User::create($data);
+    
         return redirect('/login')->with('success', "Cuenta registrada exitosamente.");
     }
 
