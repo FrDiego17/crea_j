@@ -15,3 +15,15 @@ Route::post('login', [AuthController::class, 'login']);
 
 // Rutas de logout
 Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
+
+
+//Rutas de las actualizaciones xd
+Route::middleware('auth:sanctum')->group(function () {
+    Route::put('/updateUser', [AuthController::class, 'updateUser']);
+    Route::put('/updatePassword', [AuthController::class, 'updatePassword']);
+    Route::delete('/deleteAccount', [AuthController::class, 'deleteAccount']);
+    Route::post('/logout', [AuthController::class, 'logout']);
+});
+
+Route::middleware('auth:sanctum')->post('/uploadImage', [UserController::class, 'uploadImage']);
+
