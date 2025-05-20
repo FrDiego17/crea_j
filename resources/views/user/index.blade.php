@@ -37,9 +37,10 @@
                                     <tr>
                                         <th>No</th>
                                         
-									<th >Name</th>
 									<th >Email</th>
 									<th >Username</th>
+                                    <th >role</th>
+                                    <th >id_admin</th>
 
                                         <th></th>
                                     </tr>
@@ -49,9 +50,10 @@
                                         <tr>
                                             <td>{{ ++$i }}</td>
                                             
-										<td >{{ $user->name }}</td>
 										<td >{{ $user->email }}</td>
 										<td >{{ $user->username }}</td>
+                                        <td >{{ $user->role }}</td>
+                                        <td >{{ $user->id_admin }}</td>
 
                                             <td>
                                                 <form action="{{ route('users.destroy', $user->id) }}" method="POST">

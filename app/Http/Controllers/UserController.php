@@ -9,14 +9,21 @@ use App\Http\Requests\UserRequest;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use App\Controllers\RegistroController;
+use Illuminate\Support\Facades\Hash;  
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Controller as BaseController;
+
+
 
 class UserController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(Request $request): View
+    
+    public function index(Request $request): View|RedirectResponse
     {
+        if (!Auth::check() || Auth::user()->role !== 'admin') {
+            return redirect('/')->with('error', 'No tienes permisos para acceder.');
+        }
+
         $users = User::paginate();
 
         return view('user.index', compact('users'))
@@ -38,11 +45,15 @@ class UserController extends Controller
      */
     public function store(UserRequest $request): RedirectResponse
     {
-        User::create($request->validated());
+        $data = $request->validated();
+        $data['password'] = Hash::make($data['password']); // Hashear la contraseña
+
+        User::create($data);
 
         return Redirect::route('users.index')
             ->with('success', 'User created successfully.');
     }
+
 
     /**
      * Display the specified resource.
@@ -69,11 +80,20 @@ class UserController extends Controller
      */
     public function update(UserRequest $request, User $user): RedirectResponse
     {
-        $user->update($request->validated());
+        $data = $request->validated();
 
-        return Redirect::route('users.index')
-            ->with('success', 'User updated successfully');
+        if (!empty($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        } else {
+            unset($data['password']); // no actualizar si está vacío
+        }
+
+        $user->update($data);
+
+        return Redirect::route('users.index')->with('success', 'Usuario actualizado correctamente');
     }
+
+
 
     public function destroy($id): RedirectResponse
     {

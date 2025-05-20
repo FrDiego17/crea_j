@@ -11,7 +11,7 @@
 <body>
     <nav class="navbar bg-primary " data-bs-theme="dark">
       <div class="container-fluid p-0 mt-0">
-        <img src="{{ url('logo.png')}}" id="logo" alt="" width="80" height="80">
+        <a href="/home"><img src="{{ url('logo.png')}}" id="logo" alt="" width="80" height="80"></a>
         <a class="navbar-brand fs-2 fw-bolder" id="titulo" href="#">U Go!</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
