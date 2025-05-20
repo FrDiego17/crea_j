@@ -16,6 +16,10 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'card_number',
+        'card_cvc',
+        'card_expiry',
+        'card_balance',
     ];
 
     protected $hidden = [
@@ -26,4 +30,22 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    protected static function booted()
+{
+    static::created(function ($user) {
+        $user->update([
+            'card_number' => self::generateCardNumber(),
+            'card_cvc' => rand(100, 999),
+            'card_expiry' => now()->addYear()->format('m/y'),
+            'card_balance' => 0
+        ]);
+    });
 }
+
+protected static function generateCardNumber()
+{
+    return implode(' ', array_map(fn() => rand(1000, 9999), range(1, 4)));
+}
+}
+
