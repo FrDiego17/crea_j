@@ -16,15 +16,12 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
-<<<<<<< Updated upstream
         'card_number',
         'card_cvc',
         'card_expiry',
         'card_balance',
-=======
         'role',
         'id_admin',
->>>>>>> Stashed changes
     ];
 
 

@@ -24,6 +24,8 @@
                                 <div class="form-group mb-2 mb20">
                                     <strong>Origen:</strong>
                                     {{ $ruta->origen }}
+                                    {{ $ruta->descripcion }}
+                                    {{ $ruta->horarios }}
                                 </div>
 
                     </div>

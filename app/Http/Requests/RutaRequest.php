@@ -23,6 +23,8 @@ class RutaRequest extends FormRequest
     {
         return [
 			'origen' => 'required|string|max:255',
+            'descripcion' => 'required|string|max:255',
+            'horarios' => 'required|string|max:255',
         ];
     }
 

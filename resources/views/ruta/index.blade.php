@@ -38,6 +38,8 @@
                                         <th>No</th>
                                         
 									<th >Origen</th>
+                                    <th >Descripcion</th>
+                                    <th >Horarios</th>
 
                                         <th></th>
                                     </tr>
@@ -48,6 +50,8 @@
                                             <td>{{ ++$i }}</td>
                                             
 										<td >{{ $ruta->origen }}</td>
+                                        <td >{{ $ruta->Descripcion }}</td>
+                                        <td >{{ $ruta->Horarios }}</td>
 
                                             <td>
                                                 <form action="{{ route('rutas.destroy', $ruta->id) }}" method="POST">

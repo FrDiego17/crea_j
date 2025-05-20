@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('rutas', function (Blueprint $table) {
-           
-            $table->engine = "InnoDB";
-            $table->bigIncrements('id');
-            $table->string('origen');
-            $table->timestamps();
-        });
+        // Opcional: Previene error si la tabla ya existe
+        if (!Schema::hasTable('rutas')) {
+            Schema::create('rutas', function (Blueprint $table) {
+                $table->id();
+                $table->string('origen');
+                $table->string('descripcion');
+                $table->string('horarios');
+                $table->timestamps();
+            });
+        }
     }
 
     /**
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('rutas');
     }
 };
