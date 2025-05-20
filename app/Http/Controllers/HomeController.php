@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-Use App\Http\Controllers\User;
+use App\Models\User;
 
 class HomeController extends Controller
 {
@@ -50,36 +50,31 @@ class HomeController extends Controller
         $user = Auth::user();
         $user->increment('card_balance', $request->monto);
 
-        return response()->json([
-            'success' => true,
-            'nuevo_saldo' => $user->card_balance
-        ]);
+        return redirect()->back()->with('toast_success', 'Recarga exitosa')->with('nuevo_saldo', $user->card_balance);
     }
 
     public function compartir(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email|exists:users,email',
-            'monto' => 'required|numeric|min:1'
-        ]);
+{
+    $request->validate([
+        'email' => 'required|email|exists:users,email',
+        'monto' => 'required|numeric|min:1'
+    ]);
 
-        $emisor = Auth::user();
-        $receptor = User::where('email', $request->email)->first();
+    $emisor = Auth::user();
+    $receptor = User::where('email', $request->email)->first();
 
-        if ($emisor->id === $receptor->id) {
-            return response()->json(['error' => 'No puedes enviarte dinero a ti mismo.'], 400);
-        }
-
-        if ($emisor->card_balance < $request->monto) {
-            return response()->json(['error' => 'Saldo insuficiente.'], 400);
-        }
-
-        $emisor->decrement('card_balance', $request->monto);
-        $receptor->increment('card_balance', $request->monto);
-
-        return response()->json([
-            'success' => true,
-            'saldo_actualizado' => $emisor->card_balance
-        ]);
+    if ($emisor->id === $receptor->id) {
+        return redirect()->back()->with('toast_error', 'No puedes enviarte dinero a ti mismo.');
     }
+
+    if ($emisor->card_balance < $request->monto) {
+        return redirect()->back()->with('toast_error', 'Saldo insuficiente.');
+    }
+
+    $emisor->decrement('card_balance', $request->monto);
+    $receptor->increment('card_balance', $request->monto);
+
+    return redirect()->back()->with('toast_success', 'Transferencia realizada con éxito')->with('nuevo_saldo', $emisor->card_balance);
+}
+
 }
