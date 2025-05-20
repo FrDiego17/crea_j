@@ -18,6 +18,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Ruta extends Model
 {
+
+
     
     protected $perPage = 20;
 
@@ -26,7 +28,7 @@ class Ruta extends Model
      *
      * @var array<int, string>
      */
-    protected $fillable = ['origen'];
+    protected $fillable = ['origen'  ];
 
 
     /**
