@@ -6,7 +6,7 @@
                 <li><a href="/home">Inicio</a></li>
                 <li><a href="/horario">Horarios</a></li>
                 <li><a href="#contacto">Contáctanos</a></li>
-                <li><a href="#">Bienvenido {{auth()->user()->username}} </a></li>
+                <li><a href="/usuario">Bienvenido {{auth()->user()->username}} </a></li>
                 <li><a href="/logout">Cerrar Session</a></li>
             </ul>
             <div class="menu-toggle">

@@ -14,7 +14,7 @@
 <body>
     @include('layouts.partials.navbar')
 
-    
+
     @yield('content')
 
     <script src="{{ url('Assets/JS/carrusel.js')}}"></script>
@@ -25,6 +25,12 @@
         padding: 20px;
         width: calc(100% - 250px);
         box-sizing: border-box;
+        padding: 15px;
+        position: fixed;
+        top: 0;
+        z-index: 1000;
     }
+
+    
 </style>
 </html>

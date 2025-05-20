@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 
 // Ruta para obtener el usuario autenticado, usando middleware auth:sanctum
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -26,4 +27,5 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->post('/uploadImage', [UserController::class, 'uploadImage']);
+
 
