@@ -14,9 +14,9 @@
             {!! $errors->first('descripcion', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
         <div class="form-group mb-2 mb20">
-            <label for="horario" class="form-label">{{ __('horario') }}</label>
-            <input type="text" name="horario" class="form-control @error('horario') is-invalid @enderror" value="{{ old('horario', $ruta?->horario) }}" id="horario" placeholder="horario">
-            {!! $errors->first('horario', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
+            <label for="horarios" class="form-label">{{ __('horarios') }}</label>
+            <input type="text" name="horarios" class="form-control @error('horarios') is-invalid @enderror" value="{{ old('horarios', $ruta?->horarios) }}" id="horarios" placeholder="horarios">
+            {!! $errors->first('horarios', '<div class="invalid-feedback" role="alert"><strong>:message</strong></div>') !!}
         </div>
 
 

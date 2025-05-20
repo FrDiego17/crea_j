@@ -38,17 +38,17 @@ document.addEventListener('DOMContentLoaded', function() {
             card.className = 'route-card';
             
             // Formatear los horarios
-            const scheduleHTML = route.schedule?.map(time => 
+            const scheduleHTML = route.schedule.map(time => 
                 `<span class="time-badge">${time}</span>`
             ).join('');
             
             card.innerHTML = `
                 <div class="card-header">
                     <h3 class="route-name">${route.origen}</h3>
-                    <div class="route-number">${route.number}</div>
+                    <div class="route-number">${route.horarios}</div>
                 </div>
                 <div class="card-body">
-                    <p class="route-description">${route.description}</p>
+                    <p class="route-description">${route.descripcion}</p>
                     <div class="schedule">
                         <div class="schedule-title">Horarios:</div>
                         <div class="schedule-times">
