@@ -11,6 +11,7 @@ use App\Http\Controllers\ConductoreController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\CheckAdminRole;
 use App\Http\Controllers\AdminController;
+
 use Illuminate\Support\Facades\DB;
     
  
@@ -61,3 +62,6 @@ Route::get('/datosRutas', function() {
     //     return $item;
     // });   
 });
+
+Route::post('/register-payment', [PaymentController::class, 'register']);
+Route::get('/balance', [PaymentController::class, 'getBalance']);

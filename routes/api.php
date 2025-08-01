@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\PaymentController;
 
 // Ruta para obtener el usuario autenticado, usando middleware auth:sanctum
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -28,4 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::middleware('auth:sanctum')->post('/uploadImage', [UserController::class, 'uploadImage']);
 
-
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/register-payment', [PaymentController::class, 'registerPayment']);
+    Route::get('/balance', [PaymentController::class, 'getBalance']);
+});

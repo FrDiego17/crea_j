@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('email')->unique();
             $table->string('username')->unique();
+            $table->decimal('balance', 10, 2)->default(0);
             $table->string('role')->nullable();
             $table->string('id_admin')->nullable();
             $table->timestamp('email_verified_at')->nullable();
