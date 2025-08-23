@@ -11,6 +11,7 @@ use App\Http\Controllers\ConductoreController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\CheckAdminRole;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\SetPasswordController;
 
 use Illuminate\Support\Facades\DB;
     
@@ -63,5 +64,6 @@ Route::get('/datosRutas', function() {
     // });   
 });
 
-Route::post('/register-payment', [PaymentController::class, 'register']);
-Route::get('/balance', [PaymentController::class, 'getBalance']);
+// Rutas para establecer password web 
+Route::get('/set-password', [SetPasswordController::class, 'showForm'])->name('set-password.form');
+Route::post('/set-password', [SetPasswordController::class, 'setPassword'])->name('set-password.store');

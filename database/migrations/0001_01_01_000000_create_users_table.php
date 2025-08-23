@@ -13,17 +13,19 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->string('clerk_id')->unique()->nullable();
             $table->string('name')->nullable();
             $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
             $table->string('username')->unique();
-            $table->decimal('balance', 10, 2)->default(0);
+            $table->string('password'); 
             $table->string('role')->nullable();
             $table->string('id_admin')->nullable();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });
+
+
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
             $table->string('email')->primary();
@@ -46,8 +48,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
-        Schema::dropIfExists('sessions');
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn(['clerk_id', 'username']);
+            
+            // Revertir password a NOT NULL
+            $table->string('password')->nullable(false)->change();
+        });
     }
 };

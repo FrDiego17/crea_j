@@ -2,34 +2,25 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\Api\AuthController;
 
-// Ruta para obtener el usuario autenticado, usando middleware auth:sanctum
+
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Rutas de registro y login
-Route::post('register', [AuthController::class, 'register']);
-Route::post('login', [AuthController::class, 'login']);
+Route::post('/user', [AuthController::class, 'store']);
 
-// Rutas de logout
-Route::middleware('auth:sanctum')->post('logout', [AuthController::class, 'logout']);
+Route::post('/user/verify', [AuthController::class, 'verify']);
 
+Route::post('/clerk-login', [AuthController::class, 'clerkLogin']);
 
-//Rutas de las actualizaciones xd
 Route::middleware('auth:sanctum')->group(function () {
-    Route::put('/updateUser', [AuthController::class, 'updateUser']);
-    Route::put('/updatePassword', [AuthController::class, 'updatePassword']);
-    Route::delete('/deleteAccount', [AuthController::class, 'deleteAccount']);
+    Route::get('/profile', [AuthController::class, 'profile']);
+    Route::put('/profile', [AuthController::class, 'updateProfile']);
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
-Route::middleware('auth:sanctum')->post('/uploadImage', [UserController::class, 'uploadImage']);
+Route::post('/check-email', [AuthController::class, 'checkEmail']);
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/register-payment', [PaymentController::class, 'registerPayment']);
-    Route::get('/balance', [PaymentController::class, 'getBalance']);
-});
+Route::post('/check-username', [AuthController::class, 'checkUsername']);

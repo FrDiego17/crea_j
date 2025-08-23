@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -12,43 +11,65 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+
     protected $fillable = [
+        'name',
         'username',
         'email',
         'password',
+        'clerk_id',
+        'web_password_set',
+        'email_verified_at',
+        'role',
+        'id_admin',
         'card_number',
         'card_cvc',
         'card_expiry',
         'card_balance',
-        'role',
-        'id_admin',
     ];
 
 
     protected $hidden = [
         'password',
         'remember_token',
+        'card_number',
+        'card_cvc',
     ];
+
 
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+        'card_balance' => 'decimal:2',
+        'web_password_set' => 'boolean',
     ];
 
-    protected static function booted()
-{
-    static::created(function ($user) {
-        $user->update([
-            'card_number' => self::generateCardNumber(),
-            'card_cvc' => rand(100, 999),
-            'card_expiry' => now()->addYear()->format('m/y'),
-            'card_balance' => 0
-        ]);
-    });
-}
+    protected $attributes = [
+        'role' => null,
+        'id_admin' => null,
+        'card_balance' => 0.00,
+    ];
 
-protected static function generateCardNumber()
-{
-    return implode(' ', array_map(fn() => rand(1000, 9999), range(1, 4)));
-}
-}
 
+    public static function findByClerkId(string $clerkId)
+    {
+        return static::where('clerk_id', $clerkId)->first();
+    }
+
+
+    public function isFromClerk(): bool
+    {
+        return !empty($this->clerk_id);
+    }
+
+
+    public function isConductor(): bool
+    {
+        return $this->role === 'conductor';
+    }
+
+    public function isAdmin(): bool
+    {
+        return !empty($this->id_admin);
+    }
+}

@@ -3,20 +3,21 @@
 @section('content')
     <div class="cont">
         <div class="form sign-in">
-            <!-- Registro xd -->
+            <!-- Registro -->
             <form class="Form" action="/register" method="POST">
                 @csrf
                 
                 <h2>Registrate</h2>
                 @include('layouts.partials.messages')
+                
                 <label>
                     <span>Usuario</span>
-                    <input name="username" type="text" />
+                    <input name="username" type="text" value="{{ old('username') }}" />
                 </label>
                
                 <label>
                     <span>Email</span>
-                    <input name="email" type="email" />
+                    <input name="email" type="email" value="{{ old('email') }}" />
                 </label>
 
                 <label>
@@ -53,20 +54,36 @@
                 </div>
             </div>
 
-            <!-- Inicio xd -->
+            <!-- Inicio -->
             <div class="form sign-up">
                 <form class="Form1" action="/login" method="POST">
                     @csrf
                     
                     <h2>Inicia Sesion</h2>
                     @include('layouts.partials.messages')
+                    
+                    @if ($errors->has('clerk_user'))
+                        <div class="alert alert-info" style="background-color: #e3f2fd; border: 1px solid #2196f3; padding: 15px; margin: 15px 0; border-radius: 5px;">
+                            <strong>Información:</strong> {{ $errors->first('clerk_user') }}
+                            
+                            @if ($errors->has('show_password_setup'))
+                                <div style="margin-top: 10px;">
+                                    <button type="button" onclick="setupPassword('{{ $errors->first('user_email') }}')" 
+                                            style="background: #4CAF50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
+                                        Crear Password para Web
+                                    </button>
+                                </div>
+                            @endif
+                        </div>
+                    @endif
+
                     <label>
-                        <span>Usuario/Email</span>
-                        <input name="username" id="" type="text" />
+                        <span>Email</span>
+                        <input name="username" type="email" value="{{ old('username') }}" />
                     </label>
                     <label>
                         <span>Password</span>
-                        <input name="password" id="" type="password" />
+                        <input name="password" type="password" />
                     </label>
 
                     <p class="forgot-pass">Olvidaste la contraseña</p>
@@ -77,4 +94,10 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function setupPassword(email) {
+            window.location.href = '/set-password?email=' + encodeURIComponent(email);
+        }
+    </script>
 @endsection
