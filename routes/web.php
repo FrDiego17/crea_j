@@ -1,28 +1,29 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\CheckAdminRole;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\RutaController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LogoutController;
-use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\TarjetaController;
-use App\Http\Controllers\RutaController;
-use App\Http\Controllers\ConductoreController;
-use App\Http\Controllers\UserController;
-use App\Http\Middleware\CheckAdminRole;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\SetPasswordController;
+use App\Http\Controllers\RegisterController;
 
-use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\ConductoreController;
+use App\Http\Controllers\SetPasswordController;
     
  
 // Rutas sin validacion
 Route::get('/', fn() => view('home.index'));
 Route::get('/home', [HomeController::class, 'index']);
-Route::get('/register', [RegisterController::class, 'show']);
+/*Route::get('/register', [RegisterController::class, 'show']);
 Route::post('/register', [RegisterController::class, 'register']);
 Route::get('/login', [LoginController::class, 'show'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
+Route::post('/login', [LoginController::class, 'login']);*/
 
 // Rutas con  
 Route::middleware(['auth'])->group(function () {
@@ -64,6 +65,17 @@ Route::get('/datosRutas', function() {
     // });   
 });
 
-// Rutas para establecer password web 
 Route::get('/set-password', [SetPasswordController::class, 'showForm'])->name('set-password.form');
 Route::post('/set-password', [SetPasswordController::class, 'setPassword'])->name('set-password.store');
+
+
+
+Route::get('/', [AuthController::class, 'showAuthForms'])->name('auth.forms');
+Route::get('/login', [AuthController::class, 'showAuthForms'])->name('login');
+Route::get('/register', [AuthController::class, 'showAuthForms'])->name('register');
+
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+

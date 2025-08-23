@@ -5,71 +5,87 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory, Notifiable;
 
-
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
     protected $fillable = [
         'name',
-        'username',
+        'username',           
         'email',
         'password',
-        'clerk_id',
-        'web_password_set',
-        'email_verified_at',
         'role',
-        'id_admin',
-        'card_number',
-        'card_cvc',
-        'card_expiry',
-        'card_balance',
+        'clerk_id',
+        'first_name',
+        'last_name',
     ];
 
-
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
     protected $hidden = [
         'password',
         'remember_token',
-        'card_number',
-        'card_cvc',
     ];
 
-
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-        'card_balance' => 'decimal:2',
-        'web_password_set' => 'boolean',
-    ];
-
-    protected $attributes = [
-        'role' => null,
-        'id_admin' => null,
-        'card_balance' => 0.00,
-    ];
-
-
-    public static function findByClerkId(string $clerkId)
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
     {
-        return static::where('clerk_id', $clerkId)->first();
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 
+    // Constantes para roles
+    const ROLES = [
+        'admin' => 'Administrador',
+        'conductor' => 'Conductor',
+        'pasajero' => 'Pasajero'
+    ];
 
-    public function isFromClerk(): bool
+    /**
+     * Verificar si el usuario es administrador
+     */
+    public function isAdmin(): bool
     {
-        return !empty($this->clerk_id);
+        return $this->role === 'admin';
     }
 
-
+    /**
+     * Verificar si el usuario es conductor
+     */
     public function isConductor(): bool
     {
         return $this->role === 'conductor';
     }
 
-    public function isAdmin(): bool
+    /**
+     * Verificar si el usuario es pasajero
+     */
+    public function isPasajero(): bool
     {
-        return !empty($this->id_admin);
+        return $this->role === 'pasajero';
+    }
+
+    /**
+     * Obtener el nombre completo del usuario
+     */
+    public function getFullNameAttribute(): string
+    {
+        return trim($this->first_name . ' ' . $this->last_name) ?: $this->name;
     }
 }

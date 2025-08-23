@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'clerk' => [
+    'secret_key' => env('CLERK_SECRET_KEY'),
+    'publishable_key' => env('CLERK_PUBLISHABLE_KEY'),
+    'api_url' => env('CLERK_API_URL', 'https://api.clerk.dev/v1'),
+    ],
+
 ];
