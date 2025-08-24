@@ -22,5 +22,5 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::post('/check-email', [AuthController::class, 'checkEmail']);
-
 Route::post('/check-username', [AuthController::class, 'checkUsername']);
+Route::post('/auth/clerk-login', [AuthController::class, 'loginWithClerk']);
