@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ClerkAuthController;
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -24,3 +25,5 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::post('/check-email', [AuthController::class, 'checkEmail']);
 Route::post('/check-username', [AuthController::class, 'checkUsername']);
 Route::post('/auth/clerk-login', [AuthController::class, 'loginWithClerk']);
+
+Route::post('/clerk/get-role', [ClerkAuthController::class, 'getRole']);
