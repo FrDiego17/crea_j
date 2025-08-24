@@ -1,80 +1,242 @@
-function setupToggleButtons() {
-    const toggleButtons = document.querySelectorAll('.toggle-password');
-    
-    toggleButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const fieldId = this.getAttribute('data-target');
-            const field = document.getElementById(fieldId);
-            
-            if (field.type === 'password') {
-                field.type = 'text';
-                this.innerHTML = `
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                `;
-            } else {
-                field.type = 'password';
-                this.innerHTML = `
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"></path>
-                        <path d="m10.73 5.08-1.39.87A11.5 11.5 0 0 0 2 12c.64.9 1.32 1.72 2.05 2.46"></path>
-                        <path d="m14.27 18.92 1.39-.87A11.5 11.5 0 0 0 22 12c-.64-.9-1.32-1.72-2.05-2.46"></path>
-                        <line x1="2" y1="2" x2="22" y2="22"></line>
-                    </svg>
-                `;
-            }
-        });
-    });
-}
 
-function initPasswordValidation() {
-    const password = document.getElementById('password');
-    const confirmPassword = document.getElementById('password_confirmation');
-    
-    if (!password || !confirmPassword) return;
-    
-    function validatePasswords() {
-        if (confirmPassword.value && password.value !== confirmPassword.value) {
-            confirmPassword.style.borderColor = '#ef4444';
-            confirmPassword.style.boxShadow = '0 0 0 3px rgba(239, 68, 68, 0.1)';
+
+class PasswordModal {
+    constructor() {
+        this.modal = null;
+        this.form = null;
+        this.submitBtn = null;
+        this.isInitialized = false;
+        this.init();
+    }
+
+    init() {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.bindEvents());
         } else {
-            confirmPassword.style.borderColor = '#e1e5e9';
-            confirmPassword.style.boxShadow = 'none';
+            this.bindEvents();
         }
     }
-    
-    confirmPassword.addEventListener('input', validatePasswords);
-    password.addEventListener('input', validatePasswords);
-}
 
-document.addEventListener('DOMContentLoaded', function() {
-    setupToggleButtons();
-    initPasswordValidation();
-    
-    const submitBtn = document.querySelector('.submit-btn');
-    const form = document.querySelector('.password-form');
-    
-    if (form && submitBtn) {
-        form.addEventListener('submit', function() {
-            submitBtn.style.opacity = '0.7';
-            submitBtn.innerHTML = `
-                <span>Estableciendo...</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="animation: spin 1s linear infinite;">
-                    <path d="M21 12a9 9 0 11-6.219-8.56"/>
-                </svg>
-            `;
-            submitBtn.disabled = true;
+    bindEvents() {
+        this.modal = document.getElementById('passwordModal');
+        this.form = document.getElementById('setPasswordForm');
+        this.submitBtn = document.getElementById('submitBtn');
+
+        if (!this.modal || !this.form || !this.submitBtn) {
+            console.warn('Password modal elements not found');
+            return;
+        }
+
+        this.form.addEventListener('submit', (e) => this.handleSubmit(e));
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.isModalOpen()) {
+                this.close();
+            }
+        });
+
+        const modalContent = this.modal.querySelector('.modal-content');
+        if (modalContent) {
+            modalContent.addEventListener('click', (e) => e.stopPropagation());
+        }
+
+        const overlay = this.modal.querySelector('.modal-overlay');
+        if (overlay) {
+            overlay.addEventListener('click', () => this.close());
+        }
+
+        this.isInitialized = true;
+        console.log('Password modal initialized successfully');
+    }
+
+
+    open(email) {
+        if (!this.isInitialized || !this.modal) {
+            console.error('Modal not initialized');
+            return;
+        }
+
+        console.log('Opening password modal for:', email);
+
+        const emailInput = document.getElementById('userEmail');
+        if (emailInput) {
+            emailInput.value = email;
+        }
+
+        this.modal.style.display = 'block';
+        this.modal.style.zIndex = '9999';
+        
+        document.body.style.overflow = 'hidden';
+        document.body.classList.add('modal-open');
+
+        setTimeout(() => {
+            const firstInput = this.modal.querySelector('input[type="password"]');
+            if (firstInput) {
+                firstInput.focus();
+            }
+        }, 100);
+    }
+
+    close() {
+        if (!this.modal) return;
+
+        this.modal.style.display = 'none';
+        
+        document.body.style.overflow = 'auto';
+        document.body.classList.remove('modal-open');
+        
+        if (this.form) {
+            this.form.reset();
+        }
+        this.hideMessage('modalErrors');
+        this.hideMessage('modalSuccess');
+        
+        this.resetSubmitButton();
+
+        console.log('Password modal closed');
+    }
+
+    isModalOpen() {
+        return this.modal && this.modal.style.display === 'block';
+    }
+
+    async handleSubmit(e) {
+        e.preventDefault();
+        
+        if (!this.form) return;
+
+        console.log('Submitting password form');
+
+        this.setLoadingState(true);
+        this.hideMessage('modalErrors');
+        this.hideMessage('modalSuccess');
+
+        const formData = new FormData(this.form);
+        
+        try {
+            const response = await this.submitPassword(formData);
+            const result = await response.json();
+
+            if (result.success) {
+                this.showSuccess(result.message);
+                setTimeout(() => {
+                    this.close();
+                    window.location.reload();
+                }, 2000);
+            } else {
+                this.showErrors(result.errors || { general: [result.message || 'Error desconocido'] });
+            }
+
+        } catch (error) {
+            console.error('Password setup error:', error);
+            this.showErrors({ 
+                general: ['Error de conexión. Intenta nuevamente.'] 
+            });
+        }
+
+        this.setLoadingState(false);
+    }
+
+
+    async submitPassword(formData) {
+        const token = document.querySelector('[name=_token]')?.value || 
+                     document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+        
+        if (!token) {
+            throw new Error('CSRF token not found');
+        }
+        
+        return fetch('/set-password', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': token,
+                'Accept': 'application/json'
+            },
+            body: formData
         });
     }
-});
 
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
+
+    showSuccess(message) {
+        const successDiv = document.getElementById('modalSuccess');
+        if (successDiv) {
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+        }
     }
-`;
-document.head.appendChild(style);
+
+
+    showErrors(errors) {
+        const errorsDiv = document.getElementById('modalErrors');
+        if (!errorsDiv) return;
+
+        let errorText = '';
+        
+        Object.values(errors).forEach(errorArray => {
+            if (Array.isArray(errorArray)) {
+                errorArray.forEach(error => {
+                    errorText += error + '<br>';
+                });
+            } else {
+                errorText += errorArray + '<br>';
+            }
+        });
+
+        errorsDiv.innerHTML = errorText;
+        errorsDiv.style.display = 'block';
+    }
+
+
+    hideMessage(elementId) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.style.display = 'none';
+        }
+    }
+
+    setLoadingState(isLoading) {
+        if (!this.submitBtn) return;
+
+        if (isLoading) {
+            this.submitBtn.disabled = true;
+            this.submitBtn.dataset.originalText = this.submitBtn.textContent;
+            this.submitBtn.textContent = '⏳ Procesando...';
+        } else {
+            this.resetSubmitButton();
+        }
+    }
+
+
+    resetSubmitButton() {
+        if (!this.submitBtn) return;
+
+        this.submitBtn.disabled = false;
+        const originalText = this.submitBtn.dataset.originalText || '🚀 Establecer Contraseña';
+        this.submitBtn.textContent = originalText;
+    }
+}
+
+
+const passwordModal = new PasswordModal();
+
+
+function openPasswordModal(email) {
+    console.log('openPasswordModal called with:', email);
+    if (passwordModal && typeof passwordModal.open === 'function') {
+        passwordModal.open(email);
+    } else {
+        console.error('Password modal not available');
+
+        setTimeout(() => {
+            if (passwordModal && typeof passwordModal.open === 'function') {
+                passwordModal.open(email);
+            }
+        }, 500);
+    }
+}
+
+function closePasswordModal() {
+    if (passwordModal && typeof passwordModal.close === 'function') {
+        passwordModal.close();
+    }
+}

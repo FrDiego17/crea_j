@@ -1,8 +1,7 @@
 @extends('layouts.auth-master')
 
 @section('content')
-<div class="cont">
-    <!-- Tu formulario de login/registro existente -->
+<div class="cont {{ (session('show_login_errors') || $errors->has('login_error') || $errors->has('clerk_user')) ? 's--signup' : '' }}">
     <div class="form sign-in">
         <!-- Registro -->
         <form class="Form" action="/register" method="POST">
@@ -77,7 +76,7 @@
             </div>
         </div>
 
-        <!-- Inicio -->
+        <!-- Inicio de Sesión -->
         <div class="form sign-up">
             <form class="Form1" action="/login" method="POST">
                 @csrf
@@ -135,39 +134,39 @@
 </div>
 
 <!-- Modal para establecer contraseña -->
-<div id="passwordModal" class="password-modal" style="display: none;">
-    <div class="modal-overlay" onclick="closePasswordModal()"></div>
-    <div class="modal-content">
-        <div class="modal-header">
-            <h3>Establecer Contraseña Web</h3>
-            <button class="close-btn" onclick="closePasswordModal()">&times;</button>
+<div id="passwordModal" class="password-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999;">
+    <div class="modal-overlay" onclick="closePasswordModal()" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6);"></div>
+    <div class="modal-content" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; width: 90%; max-width: 480px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5); z-index: 10000; overflow: hidden;">
+        <div class="modal-header" style="padding: 25px 30px 20px; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255, 255, 255, 0.2); display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin: 0; color: white; font-size: 22px; font-weight: 600; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">Establecer Contraseña Web</h3>
+            <button class="close-btn" onclick="closePasswordModal()" style="background: rgba(255, 255, 255, 0.2); border: none; border-radius: 50%; font-size: 20px; cursor: pointer; color: white; padding: 0; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center;">&times;</button>
         </div>
         
-        <div class="modal-body">
-            <p>Crea una contraseña para acceder desde el navegador web:</p>
+        <div class="modal-body" style="padding: 30px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);">
+            <p style="margin: 0 0 25px 0; color: #555; font-size: 15px; text-align: center; line-height: 1.5;">Crea una contraseña segura para acceder desde tu navegador web y disfrutar de todas las funcionalidades.</p>
             
-            <div id="modalErrors" class="alert alert-danger" style="display: none;"></div>
-            <div id="modalSuccess" class="alert alert-success" style="display: none;"></div>
+            <div id="modalErrors" class="alert alert-danger" style="display: none; padding: 15px 20px; margin: 20px 0; border-radius: 12px; font-size: 14px; background: linear-gradient(135deg, #ff6b6b, #ffa8a8); border: none; color: white;"></div>
+            <div id="modalSuccess" class="alert alert-success" style="display: none; padding: 15px 20px; margin: 20px 0; border-radius: 12px; font-size: 14px; background: linear-gradient(135deg, #51cf66, #8ce99a); border: none; color: white;"></div>
             
             <form id="setPasswordForm">
                 <input type="hidden" id="userEmail" name="email">
                 
-                <label>
-                    <span>Nueva Contraseña</span>
-                    <input type="password" id="newPassword" name="password" required minlength="8">
+                <label style="display: block; margin-bottom: 20px;">
+                    <span style="display: block; margin-bottom: 8px; font-weight: 600; color: #333; font-size: 14px;">Nueva Contraseña</span>
+                    <input type="password" id="newPassword" name="password" required minlength="8" style="width: 100%; padding: 15px; border: 2px solid #e1e5e9; border-radius: 12px; font-size: 15px; box-sizing: border-box; background: white;">
                 </label>
                 
-                <label>
-                    <span>Confirmar Contraseña</span>
-                    <input type="password" id="confirmPassword" name="password_confirmation" required>
+                <label style="display: block; margin-bottom: 20px;">
+                    <span style="display: block; margin-bottom: 8px; font-weight: 600; color: #333; font-size: 14px;">Confirmar Contraseña</span>
+                    <input type="password" id="confirmPassword" name="password_confirmation" required style="width: 100%; padding: 15px; border: 2px solid #e1e5e9; border-radius: 12px; font-size: 15px; box-sizing: border-box; background: white;">
                 </label>
                 
-                <div class="modal-buttons">
-                    <button type="button" onclick="closePasswordModal()" class="btn-cancel">
-                        ❌ Cancelar
+                <div class="modal-buttons" style="display: flex; gap: 15px; margin-top: 30px;">
+                    <button type="button" onclick="closePasswordModal()" class="btn-cancel" style="flex: 1; padding: 15px 25px; border: none; border-radius: 12px; cursor: pointer; font-size: 15px; font-weight: 600; background: #f8f9fa; color: #6c757d; border: 2px solid #e9ecef;">
+                        Cancelar
                     </button>
-                    <button type="submit" class="btn-submit" id="submitBtn">
-                        🚀 Establecer Contraseña
+                    <button type="submit" class="btn-submit" id="submitBtn" style="flex: 1; padding: 15px 25px; border: none; border-radius: 12px; cursor: pointer; font-size: 15px; font-weight: 600; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);">
+                        Establecer Contraseña
                     </button>
                 </div>
             </form>
@@ -175,26 +174,30 @@
     </div>
 </div>
 
+@push('styles')
+<link rel="stylesheet" href="{{ asset('css/password-modal.css') }}">
 <style>
-.password-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
+/* Fallback CSS en caso de que no cargue el archivo externo */
+#passwordModal.password-modal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 9999 !important;
+    display: none;
 }
 
-.modal-overlay {
+#passwordModal .modal-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6);
 }
 
-.modal-content {
+#passwordModal .modal-content {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -203,269 +206,181 @@
     border-radius: 20px;
     width: 90%;
     max-width: 480px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    overflow: hidden;
-    animation: modalSlideIn 0.3s ease-out;
-}
-
-@keyframes modalSlideIn {
-    from {
-        opacity: 0;
-        transform: translate(-50%, -60%);
-    }
-    to {
-        opacity: 1;
-        transform: translate(-50%, -50%);
-    }
-}
-
-.modal-header {
-    padding: 25px 30px 20px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.modal-header h3 {
-    margin: 0;
-    color: white;
-    font-size: 22px;
-    font-weight: 600;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.close-btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    border-radius: 50%;
-    font-size: 20px;
-    cursor: pointer;
-    color: white;
-    padding: 0;
-    width: 35px;
-    height: 35px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-}
-
-.close-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: rotate(90deg);
-}
-
-.modal-body {
-    padding: 30px;
-    background: rgba(255, 255, 255, 0.95);
-    backdrop-filter: blur(10px);
-}
-
-.modal-body p {
-    margin: 0 0 25px 0;
-    color: #555;
-    font-size: 15px;
-    text-align: center;
-    line-height: 1.5;
-}
-
-.modal-body label {
-    display: block;
-    margin-bottom: 20px;
-}
-
-.modal-body label span {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 600;
-    color: #333;
-    font-size: 14px;
-}
-
-.modal-body input[type="password"] {
-    width: 100%;
-    padding: 15px;
-    border: 2px solid #e1e5e9;
-    border-radius: 12px;
-    font-size: 15px;
-    box-sizing: border-box;
-    transition: all 0.3s ease;
-    background: white;
-}
-
-.modal-body input[type="password"]:focus {
-    outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-    transform: translateY(-1px);
-}
-
-.modal-buttons {
-    display: flex;
-    gap: 15px;
-    margin-top: 30px;
-}
-
-.btn-cancel, .btn-submit {
-    flex: 1;
-    padding: 15px 25px;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    font-size: 15px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.btn-cancel {
-    background: #f8f9fa;
-    color: #6c757d;
-    border: 2px solid #e9ecef;
-}
-
-.btn-cancel:hover {
-    background: #e9ecef;
-    color: #495057;
-    transform: translateY(-1px);
-}
-
-.btn-submit {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-}
-
-.btn-submit:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-}
-
-.btn-submit:disabled {
-    background: #cccccc;
-    cursor: not-allowed;
-    transform: none;
-    box-shadow: none;
-}
-
-.alert {
-    padding: 15px 20px;
-    margin: 20px 0;
-    border-radius: 12px;
-    font-size: 14px;
-    line-height: 1.4;
-}
-
-.alert-danger {
-    background: linear-gradient(135deg, #ff6b6b, #ffa8a8);
-    border: none;
-    color: white;
-    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
-}
-
-.alert-success {
-    background: linear-gradient(135deg, #51cf66, #8ce99a);
-    border: none;
-    color: white;
-    box-shadow: 0 4px 15px rgba(81, 207, 102, 0.3);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+    z-index: 10000 !important;
 }
 </style>
+@endpush
 
+@push('scripts')
+<script src="{{ asset('js/password-modal.js') }}"></script>
 <script>
+// JavaScript para alternar entre login y registro
+document.addEventListener('DOMContentLoaded', function() {
+    const hasLoginErrors = {{ (session('show_login_errors') || $errors->has('login_error') || $errors->has('clerk_user')) ? 'true' : 'false' }};
+    
+    // Función para agregar el toggle
+    function addToggleListener() {
+        const imgBtn = document.querySelector('.img__btn');
+        if (imgBtn && !imgBtn.hasAttribute('data-toggle-added')) {
+            imgBtn.addEventListener('click', function (e) {
+                // Prevenir que interfiera con otros botones
+                if (e.target.closest('.alert') || e.target.closest('.password-modal')) {
+                    return;
+                }
+                document.querySelector('.cont').classList.toggle('s--signup');
+            });
+            imgBtn.setAttribute('data-toggle-added', 'true');
+        }
+    }
+    
+    if (!hasLoginErrors) {
+        // Si no hay errores, agregar inmediatamente
+        addToggleListener();
+    } else {
+        // Si hay errores de login, asegurar modo login
+        document.querySelector('.cont').classList.add('s--signup');
+        
+        // Agregar toggle después de un delay para evitar conflictos
+        setTimeout(function() {
+            addToggleListener();
+        }, 1000); // Reducido a 1 segundo
+    }
+});
+
+// Función global para el modal (mantener para compatibilidad)
 function openPasswordModal(email) {
-    document.getElementById('userEmail').value = email;
-    document.getElementById('passwordModal').style.display = 'block';
-    document.body.style.overflow = 'hidden'; // Prevenir scroll del body
+    console.log('=== DEBUG openPasswordModal ===');
+    console.log('Email:', email);
+    
+    const modal = document.getElementById('passwordModal');
+    const emailInput = document.getElementById('userEmail');
+    
+    console.log('Modal element found:', !!modal);
+    console.log('Email input found:', !!emailInput);
+    
+    if (modal && emailInput) {
+        emailInput.value = email;
+        modal.style.display = 'block';
+        modal.style.position = 'fixed';
+        modal.style.top = '0';
+        modal.style.left = '0';
+        modal.style.width = '100%';
+        modal.style.height = '100%';
+        modal.style.zIndex = '9999';
+        document.body.style.overflow = 'hidden';
+        console.log('Modal opened successfully');
+        
+        // Focus en el primer input
+        setTimeout(() => {
+            const firstInput = document.getElementById('newPassword');
+            if (firstInput) firstInput.focus();
+        }, 100);
+    } else {
+        console.error('Modal elements not found');
+    }
+    
+    console.log('=== END DEBUG ===');
 }
 
 function closePasswordModal() {
-    document.getElementById('passwordModal').style.display = 'none';
-    document.body.style.overflow = 'auto';
-    
-    // Limpiar formulario
-    document.getElementById('setPasswordForm').reset();
-    document.getElementById('modalErrors').style.display = 'none';
-    document.getElementById('modalSuccess').style.display = 'none';
+    console.log('Closing modal...');
+    const modal = document.getElementById('passwordModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        
+        // Limpiar formulario
+        const form = document.getElementById('setPasswordForm');
+        if (form) form.reset();
+        
+        // Ocultar mensajes
+        const errorDiv = document.getElementById('modalErrors');
+        const successDiv = document.getElementById('modalSuccess');
+        if (errorDiv) errorDiv.style.display = 'none';
+        if (successDiv) successDiv.style.display = 'none';
+        
+        console.log('Modal closed successfully');
+    }
 }
 
-document.getElementById('setPasswordForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const submitBtn = document.getElementById('submitBtn');
-    const originalText = submitBtn.textContent;
-    
-    // Deshabilitar botón y mostrar loading
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Procesando...';
-    
-    // Limpiar mensajes anteriores
-    document.getElementById('modalErrors').style.display = 'none';
-    document.getElementById('modalSuccess').style.display = 'none';
-    
-    const formData = new FormData(this);
-    
-    try {
-        const response = await fetch('/set-password', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('[name=_token]').value,
-                'Accept': 'application/json'
-            },
-            body: formData
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            // Mostrar mensaje de éxito
-            const successDiv = document.getElementById('modalSuccess');
-            successDiv.textContent = result.message;
-            successDiv.style.display = 'block';
+// Manejar envío del formulario
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('setPasswordForm');
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log('Form submitted');
             
-            // Cerrar modal después de 2 segundos y recargar página
-            setTimeout(() => {
-                closePasswordModal();
-                location.reload();
-            }, 2000);
+            const submitBtn = document.getElementById('submitBtn');
+            const originalText = submitBtn.textContent;
             
-        } else {
-            // Mostrar errores
-            const errorsDiv = document.getElementById('modalErrors');
-            let errorText = '';
+            // Loading state
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Procesando...';
             
-            if (result.errors) {
-                Object.values(result.errors).forEach(errorArray => {
-                    errorArray.forEach(error => {
-                        errorText += error + '<br>';
-                    });
+            // Ocultar mensajes anteriores
+            document.getElementById('modalErrors').style.display = 'none';
+            document.getElementById('modalSuccess').style.display = 'none';
+            
+            const formData = new FormData(this);
+            
+            try {
+                const token = document.querySelector('[name=_token]')?.value || 
+                             document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+                
+                const response = await fetch('/set-password', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': token,
+                        'Accept': 'application/json'
+                    },
+                    body: formData
                 });
-            } else {
-                errorText = result.message || 'Error desconocido';
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const successDiv = document.getElementById('modalSuccess');
+                    successDiv.textContent = result.message;
+                    successDiv.style.display = 'block';
+                    
+                    setTimeout(() => {
+                        closePasswordModal();
+                        location.reload();
+                    }, 2000);
+                } else {
+                    const errorsDiv = document.getElementById('modalErrors');
+                    let errorText = '';
+                    
+                    if (result.errors) {
+                        Object.values(result.errors).forEach(errorArray => {
+                            if (Array.isArray(errorArray)) {
+                                errorArray.forEach(error => errorText += error + '<br>');
+                            } else {
+                                errorText += errorArray + '<br>';
+                            }
+                        });
+                    } else {
+                        errorText = result.message || 'Error desconocido';
+                    }
+                    
+                    errorsDiv.innerHTML = errorText;
+                    errorsDiv.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                const errorsDiv = document.getElementById('modalErrors');
+                errorsDiv.textContent = 'Error de conexión. Intenta nuevamente.';
+                errorsDiv.style.display = 'block';
             }
             
-            errorsDiv.innerHTML = errorText;
-            errorsDiv.style.display = 'block';
-        }
-        
-    } catch (error) {
-        console.error('Error:', error);
-        const errorsDiv = document.getElementById('modalErrors');
-        errorsDiv.textContent = 'Error de conexión. Intenta nuevamente.';
-        errorsDiv.style.display = 'block';
-    }
-    
-    // Restaurar botón
-    submitBtn.disabled = false;
-    submitBtn.textContent = originalText;
-});
-
-// Cerrar modal con Escape
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && document.getElementById('passwordModal').style.display === 'block') {
-        closePasswordModal();
+            // Restaurar botón
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalText;
+        });
     }
 });
 </script>
+@endpush
 @endsection
