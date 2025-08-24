@@ -65,9 +65,8 @@ Route::get('/datosRutas', function() {
     // });   
 });
 
-Route::get('/set-password', [SetPasswordController::class, 'showForm'])->name('set-password.form');
-Route::post('/set-password', [SetPasswordController::class, 'setPassword'])->name('set-password.store');
-
+Route::get('/set-password', [SetPasswordController::class, 'show']);
+Route::post('/set-password', [SetPasswordController::class, 'store']);
 
 
 Route::get('/', [AuthController::class, 'showAuthForms'])->name('auth.forms');
@@ -77,5 +76,7 @@ Route::get('/register', [AuthController::class, 'showAuthForms'])->name('registe
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+
 
 

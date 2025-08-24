@@ -25,6 +25,7 @@ class User extends Authenticatable
         'clerk_id',
         'first_name',
         'last_name',
+        'web_password_set',
     ];
 
     /**

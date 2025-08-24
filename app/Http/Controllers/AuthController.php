@@ -2,222 +2,132 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Services\ClerkService;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
 class AuthController extends Controller
 {
-    protected $clerkService;
 
-    public function __construct(ClerkService $clerkService)
-    {
-        $this->clerkService = $clerkService;
-    }
-
-    /**
-     * Mostrar la vista combinada de login/register
-     */
     public function showAuthForms()
     {
+        if (Auth::check()) {
+            return redirect('/home');
+        }
+        
         return view('auth.login_regis');
     }
 
-    /**
-     * Procesar el registro de usuario
-     */
+
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'username' => 'required|string|max:255|min:3|unique:users,name', // Agregar unique
+            'username' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
-            'password' => [
-                'required',
-                'string',
-                'min:8',
-                'confirmed',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/'
-            ],
+            'password' => 'required|string|min:8|confirmed',
         ], [
-            'username.required' => 'El nombre de usuario es obligatorio.',
-            'username.min' => 'El nombre de usuario debe tener al menos 3 caracteres.',
-            'username.unique' => 'Este nombre de usuario ya está en uso.',
-            'email.required' => 'El email es obligatorio.',
-            'email.email' => 'El formato del email no es válido.',
-            'email.unique' => 'Este email ya está registrado.',
-            'password.required' => 'La contraseña es obligatoria.',
-            'password.min' => 'La contraseña debe tener al menos 8 caracteres.',
-            'password.regex' => 'La contraseña debe contener al menos: una mayúscula, una minúscula, un número y un carácter especial (@$!%*?&).',
-            'password.confirmed' => 'La confirmación de contraseña no coincide.',
+            'username.required' => 'El nombre de usuario es obligatorio',
+            'username.unique' => 'Este nombre de usuario ya está en uso',
+            'email.required' => 'El email es obligatorio',
+            'email.unique' => 'Este email ya está registrado',
+            'email.email' => 'El email debe tener un formato válido',
+            'password.required' => 'La contraseña es obligatoria',
+            'password.min' => 'La contraseña debe tener mínimo 8 caracteres',
+            'password.confirmed' => 'Las contraseñas no coinciden',
         ]);
 
         if ($validator->fails()) {
-            return back()
+            return redirect()->back()
                 ->withErrors($validator)
                 ->withInput()
                 ->with('show_register_errors', true);
         }
 
-        DB::beginTransaction();
-        
         try {
-            // 1. Crear usuario en Clerk primero - PASAR USERNAME
-            $clerkResponse = $this->clerkService->createUser([
-                'email' => $request->email,
-                'password' => $request->password,
-                'username' => $request->username, // ✅ Agregar esta línea
-                'first_name' => $request->username,
-                'last_name' => '',
-            ]);
-
-            if (!$clerkResponse['success']) {
-                throw new \Exception($clerkResponse['error']);
-            }
-
-            // 2. Si Clerk fue exitoso, crear en Laravel
             $user = User::create([
-                'name' => $request->username,
-                'username' => $request->username,  
-                'first_name' => $request->username,
-                'last_name' => '',
+                'username' => $request->username,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'role' => 'pasajero',
-                'clerk_id' => $clerkResponse['data']['id'],
+                'clerk_id' => 'web_' . uniqid(), 
+                'web_password_set' => true,
             ]);
 
-            DB::commit();
-
-            return back()->with('success', 
-                'Usuario registrado exitosamente. Puedes iniciar sesión ahora.');
+            return redirect()->back()
+                ->with('success', 'Registro exitoso. Ya puedes iniciar sesión.')
+                ->with('show_login_form', true);
 
         } catch (\Exception $e) {
-            DB::rollback();
-            
-            return back()
-                ->withErrors(['register_error' => 'Error al registrar usuario: ' . $e->getMessage()])
+            return redirect()->back()
+                ->withErrors(['register_error' => 'Error al crear la cuenta. Intenta nuevamente.'])
                 ->withInput()
                 ->with('show_register_errors', true);
         }
     }
 
-    /**
-     * Procesar el inicio de sesión
-     */
+ 
     public function login(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $request->validate([
             'username' => 'required|email',
             'password' => 'required',
         ], [
-            'username.required' => 'El email es obligatorio.',
-            'username.email' => 'Debe ser un email válido.',
-            'password.required' => 'La contraseña es obligatoria.',
+            'username.required' => 'El email es obligatorio',
+            'username.email' => 'Debe ser un email válido',
+            'password.required' => 'La contraseña es obligatoria',
         ]);
 
-        if ($validator->fails()) {
-            return back()
-                ->withErrors($validator)
+        $email = $request->username; 
+        $password = $request->password;
+
+        $user = User::where('email', $email)->first();
+
+        \Log::info('Login attempt:', [
+            'email' => $email,
+            'user_found' => $user ? 'Yes' : 'No',
+            'user_id' => $user ? $user->id : 'N/A',
+            'has_clerk_id' => $user && $user->clerk_id ? 'Yes' : 'No',
+            'web_password_set' => $user && $user->web_password_set ? 'Yes' : 'No',
+            'password_is_null' => $user && is_null($user->password) ? 'Yes' : 'No',
+        ]);
+
+        if (!$user) {
+            return redirect()->back()
+                ->withErrors(['login_error' => 'Email no encontrado'])
                 ->withInput()
                 ->with('show_login_errors', true);
         }
 
-        $credentials = [
-            'email' => $request->username,
-            'password' => $request->password
-        ];
-
-        if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
-            
-            $user = Auth::user();
-            
-            // Redirigir según el rol
-            switch ($user->role) {
-                case 'admin':
-                    return redirect('/admin')->with('success', 'Bienvenido, ' . $user->name);
-                case 'conductor':
-                    return redirect('/home')->with('success', 'Bienvenido, ' . $user->name);
-                default:
-                    return redirect('/home')->with('success', 'Bienvenido, ' . $user->name);
-            }
+        if ($user->clerk_id && is_null($user->password)) {
+            return redirect()->back()
+                ->withErrors([
+                    'clerk_user' => 'Esta cuenta fue creada desde la app móvil.',
+                    'show_password_setup' => true,
+                    'user_email' => $user->email
+                ])
+                ->withInput()
+                ->with('show_login_errors', true);
         }
 
-        return back()
-            ->withErrors(['login_error' => 'Las credenciales no coinciden con nuestros registros.'])
+        if (Auth::attempt(['email' => $email, 'password' => $password])) {
+            $request->session()->regenerate();
+            return redirect()->intended('/home');
+        }
+
+        return redirect()->back()
+            ->withErrors(['login_error' => 'Las credenciales no coinciden con nuestros registros'])
             ->withInput()
             ->with('show_login_errors', true);
     }
 
-    /**
-     * Cerrar sesión
-     */
+
     public function logout(Request $request)
     {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         
-        return redirect('/')->with('success', 'Sesión cerrada exitosamente.');
-    }
-
-    /**
-     * Sincronizar usuario existente de Clerk con Laravel
-     */
-    public function syncClerkUser(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'clerk_id' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => 'clerk_id es requerido'], 400);
-        }
-
-        try {
-            // Verificar si ya existe el usuario
-            $existingUser = User::where('clerk_id', $request->clerk_id)->first();
-            if ($existingUser) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Usuario ya sincronizado',
-                    'user' => $existingUser
-                ]);
-            }
-
-            // Obtener datos del usuario desde Clerk
-            $clerkResponse = $this->clerkService->getUser($request->clerk_id);
-            
-            if (!$clerkResponse['success']) {
-                return response()->json(['error' => 'Usuario no encontrado en Clerk'], 404);
-            }
-
-            $clerkUser = $clerkResponse['data'];
-            
-            // Crear usuario en Laravel
-            $user = User::create([
-                'name' => $clerkUser['first_name'] . ' ' . $clerkUser['last_name'],
-                'first_name' => $clerkUser['first_name'] ?? '',
-                'last_name' => $clerkUser['last_name'] ?? '',
-                'email' => $clerkUser['email_addresses'][0]['email_address'],
-                'password' => Hash::make('temp_password_' . time()), // Password temporal
-                'role' => 'pasajero',
-                'clerk_id' => $request->clerk_id,
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Usuario sincronizado exitosamente',
-                'user' => $user
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        return redirect('/login')->with('success', 'Sesión cerrada correctamente');
     }
 }
