@@ -54,7 +54,7 @@ Route::get('/datosRutas', function() {
     try {
         //code...
         //$datos = DB::table('rutas')->select('id', 'origen')->get();
-        $datos = DB::table('conductores as cond')->leftjoin('rutas as r', 'cond.rutas_id', '=', 'r.id')->select(['r.id', 'r.origen', 'cond.id as conductor_id'])->get();
+        $datos = DB::table('conductores as cond')->rightjoin('rutas as r', 'cond.rutas_id', '=', 'r.id')->select(['r.id', 'r.origen', 'cond.id as conductor_id'])->get();
         return json_decode($datos); 
     } catch (\Throwable $th) {
         dd($th);
@@ -64,7 +64,20 @@ Route::get('/datosRutas', function() {
     //     return $item;
     // });   
 });
-
+Route::get('/api/datosRutas', function() {
+    try {
+        //code...
+        //$datos = DB::table('rutas')->select('id', 'origen')->get();
+        $datos = DB::table('conductores as cond')->rightjoin('rutas as r', 'cond.rutas_id', '=', 'r.id')->select(['r.*', 'cond.id as conductor_id'])->get();
+        return json_decode($datos); 
+    } catch (\Throwable $th) {
+        dd($th);
+    }
+    // ->map(function($item){
+    //     $item->schedule = json_decode($item->schedule, true);
+    //     return $item;
+    // });   
+});
 Route::get('/set-password', [SetPasswordController::class, 'show']);
 Route::post('/set-password', [SetPasswordController::class, 'store']);
 
@@ -76,7 +89,3 @@ Route::get('/register', [AuthController::class, 'showAuthForms'])->name('registe
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-
-
-
