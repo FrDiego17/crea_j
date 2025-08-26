@@ -384,7 +384,7 @@
         let savedRoutes = [];
 
         // Datos simulados para demostración
-        const DEMO_API_KEY = 'AIzaSyAXWZfin7I7WXH62ZnHV-TRoC2XtMkMHDo'; // Reemplazar con tu API key
+        const DEMO_API_KEY = 'AIzaSyAXWZfin7I7WXH62ZnHV-TRoC2XtMkMHDo'; 
 
         // Inicializar la aplicación
         document.addEventListener('DOMContentLoaded', function() {
@@ -1122,11 +1122,6 @@
             src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAXWZfin7I7WXH62ZnHV-TRoC2XtMkMHDo&libraries=places&callback=initializeGoogleMaps">
     </script>
 
-    <!-- Nota importante para el usuario -->
-    <div style="position: fixed; bottom: 20px; left: 20px; background: linear-gradient(135deg, #f39c12, #e67e22); color: white; padding: 15px; border-radius: 10px; max-width: 300px; z-index: 1000;">
-        <h4 style="margin: 0 0 10px 0;">⚠️ Configuración Requerida</h4>
-        <p style="margin: 0; font-size: 14px;">Para usar esta aplicación, necesitas reemplazar "TU_GOOGLE_MAPS_API_KEY" con tu clave de API de Google Maps en el código.</p>
-        <button onclick="this.parentElement.style.display='none'" style="margin-top: 10px; padding: 5px 10px; background: white; color: #f39c12; border: none; border-radius: 5px; cursor: pointer;">Entendido</button>
-    </div>
+
 </body>
 </html>

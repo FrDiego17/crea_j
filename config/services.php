@@ -41,4 +41,10 @@ return [
     'api_url' => env('CLERK_API_URL', 'https://api.clerk.dev/v1'),
     ],
 
+    'google' => [
+        'maps_api_key' => env('GOOGLE_MAPS_API_KEY', 'AIzaSyAXWZfin7I7WXH62ZnHV-TRoC2XtMkMHDo'),
+        'places_api_key' => env('GOOGLE_PLACES_API_KEY', null), // Opcional si usas una key diferente
+        'geocoding_api_key' => env('GOOGLE_GEOCODING_API_KEY', null), // Opcional si usas una key diferente
+    ],
+
 ];

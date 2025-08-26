@@ -6,6 +6,7 @@ use App\Http\Middleware\CheckAdminRole;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RutaController;
+use App\Http\Controllers\RouteController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\LoginController;
@@ -29,7 +30,7 @@ Route::post('/login', [LoginController::class, 'login']);*/
 Route::middleware(['auth'])->group(function () {
     Route::get('/logout', [LogoutController::class, 'logout']);
     Route::resource('conductores', ConductoreController::class);
-    Route::resource('rutas', RutaController::class);
+    Route::resource('rutas', RouteController::class);
     Route::resource('users', UserController::class);
     Route::get('/horario', [HomeController::class, 'horario']);
     Route::get('/usuario', [HomeController::class, 'perfil']);
@@ -48,6 +49,19 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin-usuarios', [AdminController::class, 'usuarios']);
     Route::get('/admin-rutas', [AdminController::class, 'rutas']);
     Route::get('/admin-conductores', [AdminController::class, 'conductores']);
+     Route::resource('routes', RouteController::class)->names([
+        'index' => 'routes.index',
+        'create' => 'routes.create',
+        'store' => 'routes.store',
+        'show' => 'routes.show',
+        'edit' => 'routes.edit',
+        'update' => 'routes.update',
+        'destroy' => 'routes.destroy',
+    ]);
+
+    // Rutas adicionales para funcionalidades específicas
+    Route::patch('routes/{route}/toggle-status', [RouteController::class, 'toggleStatus'])
+        ->name('routes.toggle-status');
 });
 
 Route::get('/datosRutas', function() {

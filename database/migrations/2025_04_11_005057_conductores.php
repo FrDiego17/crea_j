@@ -14,8 +14,6 @@ return new class extends Migration
         Schema::create('conductores', function (Blueprint $table) {
             $table->engine="InnoDB";
             $table->bigIncrements('id');
-            
-            $table->unsignedBigInteger('rutas_id');
 
             $table->string('nombre');
             $table->string('apellido');
@@ -27,7 +25,6 @@ return new class extends Migration
             
             $table->timestamps();
 
-            $table->foreign('rutas_id')->references('id')->on('rutas')->onDelete("cascade");
         });
     }
 
