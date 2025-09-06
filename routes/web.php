@@ -78,61 +78,7 @@ Route::get('/datosRutas', function() {
     //     return $item;
     // });   
 });
-Route::get('/api/datosRutas', function() {
-    try {
-        //code...
-        //$datos = DB::table('rutas')->select('id', 'origen')->get();
-        $datos = DB::table('routes as r')
-            ->leftjoin('bus_stops as bs', 'r.id', '=', 'bs.route_id')
-            ->leftjoin('route_schedules as rs', 'r.id', '=', 'rs.route_id')
-            ->select(['r.id as id', 
-            'r.name',
-            'r.description',
-            'r.start_location',
-            'r.end_location',
-            'r.color',
-            'r.is_active',
-                DB::raw('GROUP_CONCAT(bs.latitude) as latitude'),
-                DB::raw('GROUP_CONCAT(bs.longitude) as longitude'),
-                DB::raw('GROUP_CONCAT(rs.day_of_week) as day_of_week'),
-                DB::raw('GROUP_CONCAT(rs.departure_time) as departure_time'),
-            ])
-            ->groupBy('id', 'name','description','start_location','end_location','color','is_active')
-            ->get();
-            
-        for ($i=0; $i < sizeof($datos); $i++) {
 
-            $latitude = explode(',',$datos[$i]->latitude);
-            $longitude = explode(',',$datos[$i]->longitude);
-            $day_of_week = explode(',', $datos[$i]->day_of_week);
-            $departure_time = explode(',',$datos[$i]->departure_time);
-            $datos[$i]->stops = [];
-            $datos[$i]->horarios = "";
-
-            for ($j=0; $j < sizeof($latitude); $j++) { 
-                array_push($datos[$i]->stops, [ "coordenadas" => [
-                "latitude" => $latitude[$j],
-                "longitude" => $longitude[$j]
-                ]]);
-                $datos[$i]->horarios .= $day_of_week[$j] . ' a las ' . $departure_time[$j];
-                if($i < sizeof($latitude) - 1) $datos[$i]->horarios .= ', ';
-            }
-            unset($datos[$i]->latitude);
-            unset($datos[$i]->longitude);
-            unset($datos[$i]->day_of_week);
-            unset($datos[$i]->departure_time);
-        }
-        return json_decode($datos); 
-    } catch (\Throwable $th) {
-        dd($th);
-    }
-
-    
-    // ->map(function($item){
-    //     $item->schedule = json_decode($item->schedule, true);
-    //     return $item;
-    // });   
-});
 Route::get('/set-password', [SetPasswordController::class, 'show']);
 Route::post('/set-password', [SetPasswordController::class, 'store']);
 
@@ -144,3 +90,4 @@ Route::get('/register', [AuthController::class, 'showAuthForms'])->name('registe
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+

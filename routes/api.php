@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ClerkAuthController;
+use App\Http\Controllers\Api\RouteController;
 
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
@@ -27,6 +28,13 @@ Route::post('/check-username', [AuthController::class, 'checkUsername']);
 Route::post('/auth/clerk-login', [AuthController::class, 'loginWithClerk']);
 
 Route::post('/clerk/get-role', [ClerkAuthController::class, 'getRole']);
+
+
+
+Route::get('/datosRutas', [RouteController::class, 'getDatosRutas']);
+Route::put('/routes/{id}/status', [RouteController::class, 'updateStatus']);
+
+
 
 Route::prefix('v1')->group(function () {
     
