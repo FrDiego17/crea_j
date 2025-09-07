@@ -173,9 +173,10 @@
                                 <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">$</span>
                                 <input type="number" 
                                        id="price" 
-                                       x-model="formData.price"
+                                       x-model.number="formData.price"
                                        step="0.01"
                                        min="0"
+                                       max="999.99"
                                        class="w-full pl-8 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                        placeholder="0.25"
                                        required>
@@ -947,13 +948,20 @@
                 return this.formData.name && 
                        this.formData.start_location && 
                        this.formData.end_location && 
-                       this.formData.price &&
+                       this.formData.price > 0 &&
                        this.stops.length > 0 && 
                        !this.submitting;
             },
             
             // Enviar formulario
             async submitForm() {
+                // Validación del precio antes del envío
+                if (!this.formData.price || parseFloat(this.formData.price) <= 0) {
+                    showNotification('El precio debe ser un número válido mayor a 0', 'warning');
+                    this.submitting = false;
+                    return;
+                }
+
                 if (!this.canSubmit()) {
                     showNotification('Completa todos los campos requeridos', 'warning');
                     return;
@@ -964,12 +972,16 @@
                 try {
                     const formData = new FormData();
                     
+                    // Log para debugging
+                    console.log('Precio antes de enviar:', this.formData.price);
+                    console.log('Precio como número:', parseFloat(this.formData.price));
+                    
                     // Datos básicos
                     formData.append('name', this.formData.name);
                     formData.append('description', this.formData.description || '');
                     formData.append('start_location', this.formData.start_location);
                     formData.append('end_location', this.formData.end_location);
-                    formData.append('price', this.formData.price);
+                    formData.append('price', parseFloat(this.formData.price)); // Convertir a número
                     formData.append('color', this.formData.color);
                     formData.append('is_active', this.formData.is_active ? '1' : '0');
                     
@@ -1006,6 +1018,12 @@
                     });
                     
                     formData.append('_method', 'PUT');
+                    
+                    // Log de FormData para debugging
+                    console.log('FormData completa:');
+                    for (let [key, value] of formData.entries()) {
+                        console.log(key, value);
+                    }
                     
                     const response = await axios.post('{{ route("routes.update", $route) }}', formData, {
                         headers: {

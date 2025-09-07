@@ -16,6 +16,7 @@ class Route extends Model
         'description',
         'start_location',
         'end_location',
+        'price',
         'color',
         'route_data',
         'route_polyline',
