@@ -86,6 +86,41 @@
         border-radius: 8px;
         margin-bottom: 1.5rem;
     }
+
+    .location-suggestions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 8px;
+    }
+    
+    .location-chip {
+        background: #e0f2fe;
+        color: #0277bd;
+        border: 1px solid #b3e5fc;
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .location-chip:hover {
+        background: #b3e5fc;
+        color: #01579b;
+        transform: scale(1.05);
+    }
+    
+    .location-chip.don-bosco {
+        background: #e8f5e8;
+        color: #2e7d32;
+        border-color: #c8e6c9;
+    }
+    
+    .location-chip.don-bosco:hover {
+        background: #c8e6c9;
+        color: #1b5e20;
+    }
 </style>
 @endpush
 
@@ -149,6 +184,30 @@
                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                    placeholder="Buscar ubicación de inicio"
                                    required>
+                            
+                            <!-- Sugerencias para punto de inicio -->
+                            <div class="location-suggestions">
+                                <span class="text-xs text-gray-500 w-full">Ubicaciones recomendadas:</span>
+                                <button type="button" 
+                                        @click="setLocation('start', 'Colegio Don Bosco')"
+                                        class="location-chip don-bosco">
+                                    <i class="fas fa-school text-xs mr-1"></i>
+                                    Colegio Don Bosco
+                                </button>
+                                <button type="button" 
+                                        @click="setLocation('start', 'Universidad Don Bosco')"
+                                        class="location-chip don-bosco">
+                                    <i class="fas fa-university text-xs mr-1"></i>
+                                    Universidad Don Bosco
+                                </button>
+                                <button type="button" 
+                                        @click="setLocation('start', 'Centro Histórico San Salvador')"
+                                        class="location-chip">
+                                    <i class="fas fa-map-marker-alt text-xs mr-1"></i>
+                                    Centro Histórico
+                                </button>
+
+                            </div>
                         </div>
                         
                         <div>
@@ -161,6 +220,30 @@
                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                    placeholder="Buscar ubicación final"
                                    required>
+                            
+                            <!-- Sugerencias para punto final -->
+                            <div class="location-suggestions">
+                                <span class="text-xs text-gray-500 w-full">Ubicaciones recomendadas:</span>
+                                <button type="button" 
+                                        @click="setLocation('end', 'Universidad Don Bosco')"
+                                        class="location-chip don-bosco">
+                                    <i class="fas fa-university text-xs mr-1"></i>
+                                    Universidad Don Bosco
+                                </button>
+                                <button type="button" 
+                                        @click="setLocation('end', 'Colegio Don Bosco')"
+                                        class="location-chip don-bosco">
+                                    <i class="fas fa-school text-xs mr-1"></i>
+                                    Colegio Don Bosco
+                                </button>
+                                <button type="button" 
+                                        @click="setLocation('end', 'Centro Histórico San Salvador')"
+                                        class="location-chip">
+                                    <i class="fas fa-map-marker-alt text-xs mr-1"></i>
+                                    Centro Histórico
+                                </button>
+
+                            </div>
                         </div>
                     </div>
                     
@@ -310,6 +393,7 @@
                 <div class="mt-4 text-sm text-gray-600">
                     <p><strong>Instrucciones:</strong></p>
                     <ul class="list-disc list-inside mt-2 space-y-1">
+                        <li>Usa las ubicaciones recomendadas o busca manualmente</li>
                         <li>Puedes arrastrar la ruta para modificarla</li>
                         <li>Activa "Editar Paradas" para añadir o quitar paradas</li>
                         <li>Haz clic en "Recalcular Ruta" si cambias los puntos de inicio/final</li>
@@ -422,6 +506,13 @@
 <script>
     function routeEditManager() {
         return {
+            // Ubicaciones predefinidas principales
+            predefinedLocations: {
+                'Colegio Don Bosco': 'Colegio Don Bosco, Soyapango, El Salvador',
+                'Universidad Don Bosco': 'Universidad Don Bosco, Soyapango, El Salvador',
+                'Centro Histórico San Salvador': 'Centro Histórico, San Salvador, El Salvador',
+            },
+
             // Datos originales de la ruta
             originalData: {
                 name: {!! json_encode($route->name) !!},
@@ -486,6 +577,20 @@
             newSchedule: {
                 day: 'lunes',
                 time: ''
+            },
+
+            // Función para establecer ubicación predefinida
+            setLocation(type, locationName) {
+                const fullLocation = this.predefinedLocations[locationName] || locationName;
+                
+                if (type === 'start') {
+                    this.formData.start_location = fullLocation;
+                } else if (type === 'end') {
+                    this.formData.end_location = fullLocation;
+                }
+                
+                this.updateLastModified();
+                showNotification(`Ubicación actualizada: ${locationName}`, 'success');
             },
             
             // Inicializar el componente
@@ -768,12 +873,8 @@
                     is_active: this.originalData.is_active
                 });
                 
-                // Limpiar marcadores actuales
-                this.stops.forEach(stop => {
-                    if (stop.marker) {
-                        stop.marker.setMap(null);
-                    }
-                });
+                // Limpiar TODOS los marcadores actuales del mapa
+                this.clearAllMarkers();
                 
                 // Restaurar datos originales
                 this.loadOriginalData();
@@ -796,6 +897,16 @@
                 }
                 
                 showNotification('Datos restaurados a la versión original', 'info');
+            },
+
+            // Función para limpiar todos los marcadores del mapa
+            clearAllMarkers() {
+                this.stops.forEach(stop => {
+                    if (stop.marker) {
+                        stop.marker.setMap(null);
+                        stop.marker = null; // Eliminar referencia
+                    }
+                });
             },
             
             // Alternar modo de editar paradas
@@ -857,18 +968,23 @@
                 this.map.setZoom(16);
             },
             
-            // Eliminar parada
+            // Eliminar parada - CORREGIDO para eliminar el marcador del mapa
             removeStop(stopId) {
                 const stopIndex = this.stops.findIndex(s => s.id === stopId);
                 
                 if (stopIndex !== -1) {
                     const stop = this.stops[stopIndex];
+                    
+                    // ELIMINAR EL MARCADOR DEL MAPA ANTES DE ELIMINAR LA PARADA
                     if (stop.marker) {
                         stop.marker.setMap(null);
+                        stop.marker = null; // Limpiar referencia
                     }
+                    
+                    // Eliminar la parada del array
                     this.stops.splice(stopIndex, 1);
                     
-                    // Renumerar paradas
+                    // Renumerar paradas y actualizar marcadores
                     this.stops.forEach((stop, index) => {
                         stop.order = index;
                         if (stop.name.includes('Parada #')) {
@@ -880,7 +996,7 @@
                     });
                     
                     this.updateLastModified();
-                    showNotification('Parada eliminada', 'success');
+                    showNotification('Parada eliminada correctamente', 'success');
                 }
             },
             
