@@ -24,7 +24,9 @@ class RouteController extends Controller
                     'r.end_location',
                     'r.color',
                     'r.is_active',
-                    'r.route_data'
+                    'r.route_data',
+                    'r.price'
+
                 ])
                 ->get();
 
@@ -41,6 +43,7 @@ class RouteController extends Controller
                     'end_location' => $ruta->end_location,
                     'color' => $ruta->color,
                     'is_active' => $ruta->is_active,
+                    'price' => $ruta->price,
                     'stops' => [],
                     'horarios' => "Sin horarios definidos" 
                 ];
