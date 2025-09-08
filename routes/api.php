@@ -31,8 +31,13 @@ Route::post('/clerk/get-role', [ClerkAuthController::class, 'getRole']);
 
 
 
-Route::get('/datosRutas', [RouteController::class, 'getDatosRutas']);
+Route::get('/datosRutas', [RouteController::class, 'getDatosRutas']);   
 Route::put('/routes/{id}/status', [RouteController::class, 'updateStatus']);
+
+
+Route::post('/routes/{routeId}/driver-location', [RouteController::class, 'updateDriverLocation']);
+Route::get('/routes/{routeId}/driver-location', [RouteController::class, 'getDriverLocation']);
+Route::delete('/routes/{routeId}/driver-location', [RouteController::class, 'clearDriverLocation']);
 
 
 

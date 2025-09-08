@@ -21,7 +21,7 @@ class ConductoreController extends Controller
         if (!Auth::check() || Auth::user()->role !== 'admin') {
             return redirect('/')->with('error', 'No tienes permisos para acceder.');
         }
-
+                
         $conductores = Conductore::paginate();
 
         return view('conductore.index', compact('conductores'))
