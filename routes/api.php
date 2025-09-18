@@ -39,6 +39,9 @@ Route::post('/routes/{routeId}/driver-location', [RouteController::class, 'updat
 Route::get('/routes/{routeId}/driver-location', [RouteController::class, 'getDriverLocation']);
 Route::delete('/routes/{routeId}/driver-location', [RouteController::class, 'clearDriverLocation']);
 
+Route::post('/rides', [App\Http\Controllers\Api\RideController::class, 'store']);
+Route::get('/rides/{userId}', [App\Http\Controllers\Api\RideController::class, 'getUserRides']);
+
 
 
 Route::prefix('v1')->group(function () {
